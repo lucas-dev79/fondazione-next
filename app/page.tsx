@@ -134,7 +134,7 @@ export default function Home() {
         />
 
         <div className="hero-actions">
-          <Link href="/progetti">Progetti</Link>
+          <Link href="#progetti">Progetti</Link>
           <a href="#fondazione">La fondazione</a>
         </div>
       </section>
@@ -162,7 +162,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section program" id="programma">
+      <section className="section program" id="progetti">
         <p className="section-label">Progetti</p>
 
         <div className="program-list">
