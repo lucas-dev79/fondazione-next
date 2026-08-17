@@ -16,9 +16,7 @@ export default function Footer() {
           <p>
             Via Strada Vecchia 100
             <br />
-            6717 Blenio
-            <br />
-            Svizzera
+            6717 Blenio, Switzerland
           </p>
           <p>
             <a href="mailto:info@lafabbricadicioccolato.ch">

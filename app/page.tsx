@@ -99,6 +99,13 @@ export default function Home() {
   const heroRef = useRef<HTMLElement | null>(null)
   const heroInView = useInView(heroRef, { amount: 0.95 })
 
+  function scrollToProgram() {
+    document.getElementById('progetti')?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    })
+  }
+
   return (
     <main className="page">
       <section className="hero" ref={heroRef}>
@@ -134,7 +141,9 @@ export default function Home() {
         />
 
         <div className="hero-actions">
-          <Link href="#progetti">Progetti</Link>
+          <button type="button" onClick={scrollToProgram}>
+            Progetti
+          </button>
           <a href="#fondazione">La fondazione</a>
         </div>
       </section>
@@ -191,13 +200,17 @@ export default function Home() {
                   <p>{project.excerpt}</p>
                   <div className="project-actions">
                     <Link href={`/progetti/${project.slug}`}>
-                      Guarda il progetto
+                      Scopri di più
                     </Link>
                   </div>
                 </div>
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="program-archive-action">
+          <Link href="/progetti">Tutti i progetti</Link>
         </div>
       </section>
     </main>

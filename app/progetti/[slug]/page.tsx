@@ -32,7 +32,7 @@ export default async function ProjectPage({
           <p key={paragraph}>{paragraph}</p>
         ))}
 
-        <Link className="map-link" href="/progetti">
+        <Link className="program-archive-action" href="/progetti">
           Torna ai progetti
         </Link>
       </section>

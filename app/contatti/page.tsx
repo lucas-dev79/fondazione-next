@@ -5,9 +5,8 @@ export default function ContattiPage() {
         <p className="eyebrow">Contatti</p>
 
         <h1 className="contact-title">
-          Dove trovarci e come mettersi
-          <br />
-          in contatto con noi
+          Dove trovarci
+        
         </h1>
       </section>
 

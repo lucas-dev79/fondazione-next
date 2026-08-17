@@ -20,11 +20,13 @@ export default function ProgettiPage() {
             href={`/progetti/${project.slug}`}
             key={project.slug}
           >
-            <span>{project.category}</span>
-            <h2>{project.title}</h2>
-            <p>{project.excerpt}</p>
-            <div className="project-preview-image">
-              <img src={project.image} alt="" />
+            <span className="project-preview-category">{project.category}</span>
+            <div className="project-preview-row">
+              <div className="project-preview-image">
+                <img src={project.image} alt="" />
+              </div>
+              <h2>{project.title}</h2>
+              <p>{project.excerpt}</p>
             </div>
           </Link>
         ))}
