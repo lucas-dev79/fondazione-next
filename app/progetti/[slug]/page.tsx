@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { getProject, projects } from '../../../lib/projects'
+import ProjectCarousel from '../../../components/project-carousel'
+import { featuredProjectImages, getProject, projects } from '../../../lib/projects'
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }))
@@ -28,9 +29,33 @@ export default async function ProjectPage({
       </section>
 
       <section className="project-detail-content">
-        {project.content.map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
+        <p>{project.content.map((paragraph) => (
+    <span key={paragraph}>
+      {paragraph}
+      <br />
+      <br />
+    </span>
+  ))}</p>
+
+        <div className="project-media-block">
+          <ProjectCarousel images={featuredProjectImages} />
+
+          <div className="project-media-text">
+            <p className="section-label">Archivio visivo</p>
+            <p>
+              Una selezione di immagini accompagna il progetto come traccia
+              visiva: materiali, dettagli e atmosfere che ampliano il racconto
+              oltre il testo.
+            </p>
+          </div>
+        </div>
+
+        <p className="project-closing-text">
+          Il progetto prosegue come spazio di relazione tra immagini, materiali
+          e domande aperte. Ogni elemento contribuisce a costruire un racconto
+          che resta disponibile a nuove letture, attraversamenti e forme di
+          partecipazione.
+        </p>
 
         <Link className="program-archive-action" href="/progetti">
           Torna ai progetti
