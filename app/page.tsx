@@ -328,9 +328,13 @@ export default function Home() {
           <p className="section-label">Progetto in evidenza</p>
           <h2>{featuredProject.title}</h2>
           <p>{featuredProject.excerpt}</p>
-          <div className="program-archive-action">
-            <Link href={`/progetti/${featuredProject.slug}`}>Scopri il progetto</Link>
-          </div>
+          <Link
+            className="featured-project-action"
+            href={`/progetti/${featuredProject.slug}`}
+          >
+            <span>Vai al progetto</span>
+            <span aria-hidden="true">→</span>
+          </Link>
         </div>
 
       </motion.section>

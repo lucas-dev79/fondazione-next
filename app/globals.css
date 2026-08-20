@@ -392,8 +392,13 @@ overflow: hidden;
 }
 
 .section {
-  padding: 120px 48px;
+  padding: 100px 48px;
   border-top: 1px solid rgba(31, 26, 23, 0.18);
+}
+
+.section#progetti {
+  padding: 40px;
+
 }
 
 .featured-project {
@@ -477,7 +482,7 @@ overflow: hidden;
 
 .featured-project-content h2 {
   margin: 0;
-  font-size: clamp(38px, 5.5vw, 82px);
+  font-size: clamp(28px, 4vw, 56px);
   line-height: 0.98;
   letter-spacing: -0.04em;
 }
@@ -487,6 +492,34 @@ overflow: hidden;
   font-size: 18px;
   line-height: 1.45;
   display: none;
+}
+
+.featured-project-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 34px;
+  font-size: 15px;
+  color: #1f1a17;
+}
+
+.featured-project-action span:last-child {
+  animation: featured-project-arrow 1.5s ease-in-out infinite;
+}
+
+.featured-project-action:hover span:last-child {
+  animation-duration: 0.9s;
+}
+
+@keyframes featured-project-arrow {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(8px);
+  }
 }
 
 .section-label {
@@ -606,6 +639,14 @@ overflow: hidden;
   padding: 32px 0;
   border-bottom: 1px solid rgba(31, 26, 23, 0.18);
   text-align: left;
+  transition:
+    padding 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.program-list article.is-open {
+  padding-top: 38px;
+  padding-bottom: 42px;
 }
 
 .program-list span {
@@ -761,7 +802,8 @@ overflow: hidden;
   font-size: 28px;
   line-height: 1;
   margin-top: 8px;
-  transition: transform 0.3s ease;
+  transform-origin: center;
+  transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
   color: #c46a3a;
 }
 
@@ -773,7 +815,13 @@ overflow: hidden;
 .program-description {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s ease;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition:
+    max-height 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease,
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: max-height, opacity, transform;
 }
 
 .program-description p {
@@ -785,7 +833,9 @@ overflow: hidden;
 }
 
 .program-list article.is-open .program-description {
-  max-height: 260px;
+  max-height: 340px;
+  opacity: 1;
+  transform: translateY(0);
 }
 
 
