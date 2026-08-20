@@ -1,9 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { MouseEvent, useEffect, useRef, useState } from 'react'
+import { MouseEvent, useRef, useState } from 'react'
 import {
-  AnimatePresence,
   motion,
   useInView,
   useMotionValue,
@@ -192,19 +191,10 @@ function HeroImageFragment({
 
 export default function Home() {
   const [openProgram, setOpenProgram] = useState<string | null>(null)
-  const [loaderVisible, setLoaderVisible] = useState(true)
   const heroRef = useRef<HTMLElement | null>(null)
   const heroInView = useInView(heroRef, { amount: 0.95 })
-  const heroReady = !loaderVisible && heroInView
+  const heroReady = heroInView
   const featuredProject = projects[0]
-
-  useEffect(() => {
-    const loaderTimer = window.setTimeout(() => {
-      setLoaderVisible(false)
-    }, 1400)
-
-    return () => window.clearTimeout(loaderTimer)
-  }, [])
 
   function scrollToProgram() {
     document.getElementById('progetti')?.scrollIntoView({
@@ -222,29 +212,6 @@ export default function Home() {
 
   return (
     <main className="page">
-      <AnimatePresence>
-        {loaderVisible && (
-          <motion.div
-            className="home-loader"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <img
-              className="home-loader-logo"
-              src="/images/FFC-logo-icon.png"
-              alt=""
-            />
-            <motion.span
-              className="home-loader-line"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 1.05, ease: [0.22, 1, 0.36, 1] }}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <section className="hero" ref={heroRef}>
         <p className="eyebrow">Fondazione</p>
 
