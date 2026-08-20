@@ -504,6 +504,7 @@ overflow: hidden;
 }
 
 .featured-project-action span:last-child {
+  color: #c2500b;
   animation: featured-project-arrow 1.5s ease-in-out infinite;
 }
 
