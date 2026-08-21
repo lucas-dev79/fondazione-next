@@ -31,7 +31,17 @@ a {
   gap: 24px;
   align-content: center;
   background: #f4f0e8;
-  animation: home-loader-auto-hide 0.35s ease 0.95s forwards;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.35s ease,
+    visibility 0s linear 0.35s;
+}
+
+.home-loader.is-leaving {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
 
 .home-loader-logo {
@@ -44,13 +54,22 @@ a {
   height: 2px;
   background: #c2500b;
   transform-origin: left center;
+  animation: home-loader-line 0.55s ease forwards;
 }
 
-@keyframes home-loader-auto-hide {
+@media (hover: none) and (pointer: coarse) {
+  .home-loader {
+    display: none !important;
+  }
+}
+
+@keyframes home-loader-line {
+  from {
+    transform: scaleX(0);
+  }
+
   to {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+    transform: scaleX(1);
   }
 }
 
@@ -74,7 +93,7 @@ a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 10;
+  z-index: 100;
 }
 
 .logo {
@@ -86,6 +105,17 @@ a {
   display: block;
   width: 140px;
   height: auto;
+}
+
+.menu-check:checked ~ .site-header .logo {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.menu-check {
+  position: fixed;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .site-nav {
@@ -101,14 +131,13 @@ a {
   transition:
     transform 0.4s ease,
     visibility 0s linear 0.4s;
-  z-index: 9;
-visibility: hidden;
-pointer-events: none;
-overflow: hidden;
+  z-index: 90;
+  visibility: hidden;
+  pointer-events: none;
+  overflow: hidden;
 }
 
-.site-nav.is-open {
-  
+.menu-check:checked ~ .site-nav {
   transform: translateY(0);
   visibility: visible;
   pointer-events: auto;
@@ -138,7 +167,7 @@ overflow: hidden;
 .menu-toggle {
   transition: background-color 0.45s ease, color 0.45s ease;
   position: relative;
-  z-index: 11;
+  z-index: 110;
   width: 44px;
   height: 44px;
   padding: 0;
@@ -159,16 +188,16 @@ overflow: hidden;
   transition: transform 0.25s ease, top 0.25s ease, bottom 0.25s ease;
 }
 
-.menu-toggle.is-open {
+.menu-check:checked ~ .site-header .menu-toggle {
   color: #f4f0e8;
 }
 
-.menu-toggle.is-open span:first-child {
+.menu-check:checked ~ .site-header .menu-toggle span:first-child {
   top: 21px;
   transform: rotate(45deg);
 }
 
-.menu-toggle.is-open span:last-child {
+.menu-check:checked ~ .site-header .menu-toggle span:last-child {
   bottom: 21px;
   transform: rotate(-45deg);
 }
@@ -199,7 +228,7 @@ overflow: hidden;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 10;
+  z-index: 100;
   background: transparent;
   transition:
     transform 0.3s ease,
@@ -576,20 +605,32 @@ overflow: hidden;
 }
 
 .fondazione-sticky-gallery {
+  position: -webkit-sticky;
   position: sticky;
   top: 132px;
-  display: grid;
+  display: flex;
   align-items: center;
+  justify-content: center;
   height: 72vh;
   overflow-x: clip;
   overflow-y: visible;
+  transform: translateZ(0);
+}
+
+.fondazione-sticky-gallery-section.is-gsap-pinned .fondazione-sticky-gallery {
+  position: relative;
+  top: auto;
+  height: 100vh;
+  padding-top: 0;
 }
 
 .fondazione-sticky-gallery-stage {
   position: relative;
   width: 100vw;
   height: min(56vh, 520px);
-  padding: 40px 0 80px;
+  padding: 40px 0;
+  display: flex;
+  align-items: center;
   overflow: visible;
 }
 
@@ -599,6 +640,8 @@ overflow: hidden;
   gap: 56px;
   height: 100%;
   will-change: transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .fondazione-sticky-gallery-image {
@@ -606,9 +649,10 @@ overflow: hidden;
   aspect-ratio: 4 / 3;
   margin: 0;
   overflow: hidden;
-  box-shadow: 0 30px 80px rgba(31, 26, 23, 0.2);
+  box-shadow: 0 18px 34px rgba(31, 26, 23, 0.16);
   transform-origin: center;
-  rotate: -3deg;
+  backface-visibility: hidden;
+  transform: rotate(-3deg) translateZ(0);
 }
 
 .fondazione-sticky-gallery-image:first-child {
@@ -618,15 +662,15 @@ overflow: hidden;
 .fondazione-sticky-gallery-image:nth-child(even) {
   flex-basis: min(38vw, 340px);
   aspect-ratio: 3 / 4;
-  rotate: 3deg;
+  transform: rotate(3deg) translateZ(0);
 }
 
 .fondazione-sticky-gallery-image:nth-child(3n) {
-  rotate: 2deg;
+  transform: rotate(2deg) translateZ(0);
 }
 
 .fondazione-sticky-gallery-image:nth-child(4n) {
-  rotate: -2deg;
+  transform: rotate(-2deg) translateZ(0);
 }
 
 .fondazione-sticky-gallery-image img {
@@ -634,6 +678,8 @@ overflow: hidden;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 .program-list {

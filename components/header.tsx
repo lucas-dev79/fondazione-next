@@ -4,9 +4,16 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false)
   const [hiddenHeader, setHiddenHeader] = useState(false)
   const [headerScrolled, setHeaderScrolled] = useState(false)
+
+  function closeMenu() {
+    const menuCheck = document.getElementById('site-menu-check')
+
+    if (menuCheck instanceof HTMLInputElement) {
+      menuCheck.checked = false
+    }
+  }
 
   useEffect(() => {
     let lastScrollY = window.scrollY
@@ -33,42 +40,52 @@ export default function Header() {
   }, [])
 
   return (
-    <header
-      className={`site-header ${hiddenHeader ? 'is-hidden' : ''} ${
-        headerScrolled ? 'is-scrolled' : ''
-      }`}
-    >
-      <Link className="logo" href="/" onClick={() => setMenuOpen(false)}>
-        <img
-          src="/images/Fondazione-logo.png"
-          alt="Fondazione La Fabbrica di Cioccolato"
-        />
-      </Link>
+    <>
+      <input
+        className="menu-check"
+        id="site-menu-check"
+        type="checkbox"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
 
-      <button
-        className={menuOpen ? 'menu-toggle is-open' : 'menu-toggle'}
-        type="button"
-        aria-label={menuOpen ? 'Chiudi menu' : 'Apri menu'}
-        onClick={() => setMenuOpen(!menuOpen)}
+      <header
+        className={`site-header ${hiddenHeader ? 'is-hidden' : ''} ${
+          headerScrolled ? 'is-scrolled' : ''
+        }`}
       >
-        <span></span>
-        <span></span>
-      </button>
+        <Link className="logo" href="/" onClick={closeMenu}>
+          <img
+            src="/images/Fondazione-logo.png"
+            alt="Fondazione La Fabbrica di Cioccolato"
+          />
+        </Link>
 
-      <nav className={menuOpen ? 'site-nav is-open' : 'site-nav'}>
-        <Link href="/" onClick={() => setMenuOpen(false)}>
+        <label
+          className="menu-toggle"
+          htmlFor="site-menu-check"
+          aria-label="Apri menu"
+          aria-controls="site-menu"
+        >
+          <span></span>
+          <span></span>
+        </label>
+      </header>
+
+      <nav className="site-nav" id="site-menu">
+        <Link href="/" onClick={closeMenu}>
           Home
         </Link>
-        <Link href="/fondazione" onClick={() => setMenuOpen(false)}>
+        <Link href="/fondazione" onClick={closeMenu}>
           Fondazione
         </Link>
-        <Link href="/progetti" onClick={() => setMenuOpen(false)}>
+        <Link href="/progetti" onClick={closeMenu}>
           Progetti
         </Link>
-        <Link href="/contatti" onClick={() => setMenuOpen(false)}>
+        <Link href="/contatti" onClick={closeMenu}>
           Contatti
         </Link>
       </nav>
-    </header>
+    </>
   )
 }

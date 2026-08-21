@@ -1,12 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { MouseEvent, useRef, useState } from 'react'
+import { MouseEvent, useEffect, useRef, useState } from 'react'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import {
   motion,
   useInView,
   useMotionValue,
-  useScroll,
   useSpring,
   useTransform,
 } from 'motion/react'
@@ -37,36 +38,118 @@ const fondazioneGalleryImages = [
   '/images/grid-hp/grid-03.jpg',
 ]
 
+function isSafariBrowser() {
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+}
+
+function handleHomeAnchorClick(
+  event: MouseEvent<HTMLAnchorElement>,
+  sectionId: string,
+) {
+  if (!isSafariBrowser()) {
+    return
+  }
+
+  const target = document.getElementById(sectionId)
+
+  if (!target) {
+    return
+  }
+
+  event.preventDefault()
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    target.scrollIntoView({ block: 'start' })
+    return
+  }
+
+  const startY = window.scrollY
+  const targetY = target.getBoundingClientRect().top + startY
+  const distance = targetY - startY
+  const duration = Math.min(Math.max(Math.abs(distance) * 0.65, 1000), 2200)
+  let startTime: number | null = null
+
+  function animateScroll(currentTime: number) {
+    if (startTime === null) {
+      startTime = currentTime
+    }
+
+    const elapsed = currentTime - startTime
+    const progress = Math.min(elapsed / duration, 1)
+    const easedProgress = progress
+
+    window.scrollTo(0, startY + distance * easedProgress)
+
+    if (progress < 1) {
+      window.requestAnimationFrame(animateScroll)
+    }
+  }
+
+  window.requestAnimationFrame(animateScroll)
+}
+
 function FondazioneStickyGallery() {
   const galleryRef = useRef<HTMLDivElement | null>(null)
-  const { scrollYProgress } = useScroll({
-    target: galleryRef,
-    offset: ['start start', 'end end'],
-  })
-  const galleryX = useTransform(scrollYProgress, [0, 1], ['28vw', '-78%'])
+  const stickyRef = useRef<HTMLDivElement | null>(null)
+  const trackRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    const gallery = galleryRef.current
+    const sticky = stickyRef.current
+    const track = trackRef.current
+
+    if (!gallery || !sticky || !track) {
+      return
+    }
+
+    gsap.registerPlugin(ScrollTrigger)
+    const isSafari = isSafariBrowser()
+    gallery.classList.toggle('is-gsap-pinned', isSafari)
+
+    const context = gsap.context(() => {
+      gsap.fromTo(
+        track,
+        { x: '34vw' },
+        {
+          x: '-78%',
+          ease: 'none',
+          force3D: true,
+          scrollTrigger: {
+            trigger: gallery,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: isSafari ? 1.8 : 1.2,
+            pin: isSafari ? sticky : false,
+            pinSpacing: false,
+            anticipatePin: isSafari ? 1 : 0,
+            invalidateOnRefresh: true,
+          },
+        },
+      )
+    }, gallery)
+
+    return () => {
+      gallery.classList.remove('is-gsap-pinned')
+      context.revert()
+    }
+  }, [])
 
   return (
     <div className="fondazione-sticky-gallery-section" ref={galleryRef}>
-      <motion.div
-        className="fondazione-sticky-gallery"
-        initial={{ opacity: 0, y: 56 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: false, amount: 0.22 }}
-        transition={{
-          duration: 1.25,
-          ease: [0.22, 1, 0.36, 1],
-        }}
-      >
+      <div className="fondazione-sticky-gallery" ref={stickyRef}>
         <div className="fondazione-sticky-gallery-stage">
-          <motion.div className="fondazione-sticky-gallery-track" style={{ x: galleryX }}>
+          <div
+            className="fondazione-sticky-gallery-track"
+            ref={trackRef}
+          >
             {fondazioneGalleryImages.map((image) => (
               <figure className="fondazione-sticky-gallery-image" key={image}>
                 <img src={image} alt="" />
               </figure>
             ))}
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   )
 }
@@ -189,26 +272,12 @@ function HeroImageFragment({
   )
 }
 
-export default function Home() {
+function AnimatedHome() {
   const [openProgram, setOpenProgram] = useState<string | null>(null)
   const heroRef = useRef<HTMLElement | null>(null)
   const heroInView = useInView(heroRef, { amount: 0.95 })
   const heroReady = heroInView
   const featuredProject = projects[0]
-
-  function scrollToProgram() {
-    document.getElementById('progetti')?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
-  }
-
-  function scrollToNextSection() {
-    document.getElementById('progetto-in-evidenza')?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
-  }
 
   return (
     <main className="page">
@@ -255,20 +324,30 @@ export default function Home() {
         />
 
         <div className="hero-actions">
-          <button type="button" onClick={scrollToProgram}>
+          <a
+            href="#progetti"
+            onClick={(event) => handleHomeAnchorClick(event, 'progetti')}
+          >
             Progetti
-          </button>
-          <a href="#fondazione">La fondazione</a>
+          </a>
+          <a
+            href="#fondazione"
+            onClick={(event) => handleHomeAnchorClick(event, 'fondazione')}
+          >
+            La fondazione
+          </a>
         </div>
 
-        <button
+        <a
           className="hero-scroll-indicator"
-          type="button"
-          onClick={scrollToNextSection}
+          href="#progetto-in-evidenza"
+          onClick={(event) =>
+            handleHomeAnchorClick(event, 'progetto-in-evidenza')
+          }
           aria-label="Scorri alla sezione successiva"
         >
           <span />
-        </button>
+        </a>
       </section>
 
       <motion.section
@@ -402,4 +481,184 @@ export default function Home() {
       </section>
     </main>
   )
+}
+
+function StaticHome() {
+  const [openProgram, setOpenProgram] = useState<string | null>(null)
+  const featuredProject = projects[0]
+
+  return (
+    <main className="page">
+      <section className="hero">
+        <p className="eyebrow">Fondazione</p>
+
+        <h1 className="hero-title">
+          <span className="hero-title-line">La Fabbrica</span>
+          <span className="hero-title-line">di Cioccolato</span>
+        </h1>
+
+        <figure className="hero-image-fragment">
+          <div className="hero-image-fragment-motion">
+            <img src="/images/fairy_tail.jpg" alt="" />
+          </div>
+        </figure>
+
+        <p className="hero-text">
+          Arte contemporanea, cultura e comunità in uno spazio dedicato alla
+          ricerca, agli incontri e alla produzione di nuove immaginazioni.
+        </p>
+
+        <figure className="hero-image-fragment hero-image-fragment-secondary">
+          <div className="hero-image-fragment-motion">
+            <img src="/images/fondazione_01.jpg" alt="" />
+          </div>
+        </figure>
+
+        <div className="hero-actions">
+          <a
+            href="#progetti"
+            onClick={(event) => handleHomeAnchorClick(event, 'progetti')}
+          >
+            Progetti
+          </a>
+          <a
+            href="#fondazione"
+            onClick={(event) => handleHomeAnchorClick(event, 'fondazione')}
+          >
+            La fondazione
+          </a>
+        </div>
+
+        <a
+          className="hero-scroll-indicator"
+          href="#progetto-in-evidenza"
+          onClick={(event) =>
+            handleHomeAnchorClick(event, 'progetto-in-evidenza')
+          }
+          aria-label="Scorri alla sezione successiva"
+        >
+          <span />
+        </a>
+      </section>
+
+      <section className="featured-project" id="progetto-in-evidenza">
+        <div className="featured-project-grid">
+          <figure className="featured-project-tile featured-project-tile-single">
+            <img src={featuredProjectImages[0]} alt="" />
+          </figure>
+        </div>
+
+        <div className="featured-project-content">
+          <p className="section-label">Progetto in evidenza</p>
+          <h2>{featuredProject.title}</h2>
+          <p>{featuredProject.excerpt}</p>
+          <Link
+            className="featured-project-action"
+            href={`/progetti/${featuredProject.slug}`}
+          >
+            <span>Vai al progetto</span>
+            <span aria-hidden="true">→</span>
+          </Link>
+        </div>
+      </section>
+
+      <section className="section about" id="fondazione">
+        <p className="section-label">La fondazione</p>
+
+        <div className="section-flex">
+          <h2>
+            Un luogo dove arte, territorio e pensiero contemporaneo si
+            incontrano.
+          </h2>
+
+          <div className="desc-cta-block">
+            <p>
+              La Fabbrica di Cioccolato promuove mostre, residenze, progetti
+              culturali e momenti di dialogo. La fondazione nasce come spazio
+              aperto alla ricerca, alla comunità e alla sperimentazione
+              artistica.
+            </p>
+            <div className="fondazione-action">
+              <Link href="/fondazione">Scopri di più</Link>
+            </div>
+          </div>
+        </div>
+
+        <div className="fondazione-sticky-gallery-section">
+          <div className="fondazione-sticky-gallery">
+            <div className="fondazione-sticky-gallery-stage">
+              <div className="fondazione-sticky-gallery-track">
+                {fondazioneGalleryImages.map((image) => (
+                  <figure className="fondazione-sticky-gallery-image" key={image}>
+                    <img src={image} alt="" />
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section program" id="progetti">
+        <p className="section-label">Progetti</p>
+
+        <div className="program-list">
+          {projects.map((project) => (
+            <article
+              className={openProgram === project.slug ? 'is-open' : ''}
+              key={project.slug}
+            >
+              <span className="program-category">{project.category}</span>
+
+              <div className="program-body">
+                <button
+                  type="button"
+                  className="program-toggle"
+                  onClick={() =>
+                    setOpenProgram(
+                      openProgram === project.slug ? null : project.slug,
+                    )
+                  }
+                >
+                  <h3>{project.title}</h3>
+                  <span className="program-arrow">↓</span>
+                </button>
+
+                <div className="program-description">
+                  <p>{project.excerpt}</p>
+                  <div className="project-actions">
+                    <Link href={`/progetti/${project.slug}`}>
+                      Scopri di più
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <div className="program-archive-action">
+          <Link href="/progetti">Tutti i progetti</Link>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+export default function Home() {
+  const [useAnimatedHome, setUseAnimatedHome] = useState(false)
+
+  useEffect(() => {
+    const animationFrame = window.requestAnimationFrame(() => {
+      const desktopMotion = window.matchMedia(
+        '(hover: hover) and (pointer: fine)',
+      ).matches
+
+      setUseAnimatedHome(desktopMotion)
+    })
+
+    return () => window.cancelAnimationFrame(animationFrame)
+  }, [])
+
+  return useAnimatedHome ? <AnimatedHome /> : <StaticHome />
 }

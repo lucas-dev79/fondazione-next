@@ -1,6 +1,5 @@
 'use client'
 
-import { AnimatePresence, motion } from 'motion/react'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -11,38 +10,32 @@ export default function RouteLoader() {
 }
 
 function RouteLoaderScreen() {
-  const [visible, setVisible] = useState(true)
+  const [isLeaving, setIsLeaving] = useState(false)
+  const [isMounted, setIsMounted] = useState(true)
 
   useEffect(() => {
-    const loaderTimer = window.setTimeout(() => {
-      setVisible(false)
+    const leaveTimer = window.setTimeout(() => {
+      setIsLeaving(true)
     }, 700)
 
-    return () => window.clearTimeout(loaderTimer)
+    const removeTimer = window.setTimeout(() => {
+      setIsMounted(false)
+    }, 1100)
+
+    return () => {
+      window.clearTimeout(leaveTimer)
+      window.clearTimeout(removeTimer)
+    }
   }, [])
 
+  if (!isMounted) {
+    return null
+  }
+
   return (
-    <AnimatePresence>
-      {visible && (
-        <motion.div
-          className="home-loader"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <img
-            className="home-loader-logo"
-            src="/images/FFC-logo-icon.png"
-            alt=""
-          />
-          <motion.span
-            className="home-loader-line"
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          />
-        </motion.div>
-      )}
-    </AnimatePresence>
+    <div className={isLeaving ? 'home-loader is-leaving' : 'home-loader'}>
+      <img className="home-loader-logo" src="/images/FFC-logo-icon.png" alt="" />
+      <span className="home-loader-line" />
+    </div>
   )
 }
