@@ -1,11 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function Header() {
-  const [hiddenHeader, setHiddenHeader] = useState(false)
-  const [headerScrolled, setHeaderScrolled] = useState(false)
+  const headerRef = useRef<HTMLElement | null>(null)
 
   function closeMenu() {
     const menuCheck = document.getElementById('site-menu-check')
@@ -16,50 +15,34 @@ export default function Header() {
   }
 
   useEffect(() => {
-    let lastScrollY = window.scrollY
-    let lastTouchY = 0
+    const header = headerRef.current
+
+    if (!header) {
+      return
+    }
+
+    const headerElement = header
+    let previousScrollY = window.pageYOffset
 
     function handleScroll() {
-      const currentScrollY = window.scrollY
+      const currentScrollY = window.pageYOffset
 
-      setHeaderScrolled(currentScrollY > 10)
+      headerElement.classList.toggle('is-scrolled', currentScrollY > 10)
 
-      if (currentScrollY > lastScrollY && currentScrollY > 80) {
-        setHiddenHeader(true)
+      if (previousScrollY < currentScrollY && currentScrollY > 80) {
+        headerElement.classList.add('is-hidden')
       } else {
-        setHiddenHeader(false)
+        headerElement.classList.remove('is-hidden')
       }
 
-      lastScrollY = currentScrollY
+      previousScrollY = currentScrollY
     }
 
-    function handleTouchStart(event: TouchEvent) {
-      lastTouchY = event.touches[0]?.clientY ?? 0
-    }
-
-    function handleTouchMove(event: TouchEvent) {
-      const currentTouchY = event.touches[0]?.clientY ?? lastTouchY
-      const touchDelta = currentTouchY - lastTouchY
-      const currentScrollY = window.scrollY
-
-      setHeaderScrolled(currentScrollY > 10)
-
-      if (Math.abs(touchDelta) > 6) {
-        setHiddenHeader(touchDelta < 0 && currentScrollY > 80)
-      }
-
-      lastTouchY = currentTouchY
-      lastScrollY = currentScrollY
-    }
-
+    handleScroll()
     window.addEventListener('scroll', handleScroll)
-    window.addEventListener('touchstart', handleTouchStart, { passive: true })
-    window.addEventListener('touchmove', handleTouchMove, { passive: true })
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('touchstart', handleTouchStart)
-      window.removeEventListener('touchmove', handleTouchMove)
     }
   }, [])
 
@@ -73,11 +56,7 @@ export default function Header() {
         tabIndex={-1}
       />
 
-      <header
-        className={`site-header ${hiddenHeader ? 'is-hidden' : ''} ${
-          headerScrolled ? 'is-scrolled' : ''
-        }`}
-      >
+      <header className="site-header" ref={headerRef}>
         <Link className="logo" href="/" onClick={closeMenu}>
           <img
             src="/images/Fondazione-logo.png"
