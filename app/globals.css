@@ -1244,6 +1244,13 @@ img.hero-image {
 
   .site-header {
     padding: 20px 24px;
+    background: #f4f0e8;
+    border-bottom: 1px solid rgba(31, 26, 23, 0.08);
+  }
+
+  .menu-check:checked ~ .site-header {
+    background: transparent;
+    border-bottom-color: transparent;
   }
 
   .site-nav {
