@@ -17,6 +17,7 @@ export default function Header() {
 
   useEffect(() => {
     let lastScrollY = window.scrollY
+    let lastTouchY = 0
 
     function handleScroll() {
       const currentScrollY = window.scrollY
@@ -32,10 +33,33 @@ export default function Header() {
       lastScrollY = currentScrollY
     }
 
+    function handleTouchStart(event: TouchEvent) {
+      lastTouchY = event.touches[0]?.clientY ?? 0
+    }
+
+    function handleTouchMove(event: TouchEvent) {
+      const currentTouchY = event.touches[0]?.clientY ?? lastTouchY
+      const touchDelta = currentTouchY - lastTouchY
+      const currentScrollY = window.scrollY
+
+      setHeaderScrolled(currentScrollY > 10)
+
+      if (Math.abs(touchDelta) > 6) {
+        setHiddenHeader(touchDelta < 0 && currentScrollY > 80)
+      }
+
+      lastTouchY = currentTouchY
+      lastScrollY = currentScrollY
+    }
+
     window.addEventListener('scroll', handleScroll)
+    window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: true })
 
     return () => {
       window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
     }
   }, [])
 
