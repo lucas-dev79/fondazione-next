@@ -1135,6 +1135,24 @@ img.hero-image {
     padding: 96px 24px;
   }
 
+  .hero {
+    padding-top: 150px;
+  }
+
+  .hero-title {
+    order: 1;
+    font-size: 60px;
+  }
+
+  .hero-scroll-indicator {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    order: 3;
+    margin-top: 28px;
+    transform: none;
+  }
+
   .featured-project {
     grid-template-columns: 1fr;
     gap: 32px;
@@ -1196,13 +1214,32 @@ img.hero-image {
     bottom: auto;
     width: min(70vw, 260px);
     margin: 28px 0 0;
-    order: 3;
+    order: 4;
+  }
+
+  .hero-text {
+    order: 2;
   }
 
   .hero-image-fragment-secondary {
     width: min(58vw, 220px);
     margin-top: 18px;
     order: 5;
+  }
+
+  .hero-actions {
+    order: 6;
+  }
+
+  .section-flex {
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+  }
+
+  .desc-cta-block {
+    width: 100%;
+    max-width: 100%;
   }
 
   .site-header {
