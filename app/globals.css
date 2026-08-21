@@ -1244,6 +1244,7 @@ img.hero-image {
 
   .site-header {
     padding: 20px 24px;
+    background: #f4f0e8;
   }
 
   .menu-check:checked ~ .site-header {
