@@ -31,6 +31,7 @@ a {
   gap: 24px;
   align-content: center;
   background: #f4f0e8;
+  animation: home-loader-auto-hide 0.35s ease 0.95s forwards;
 }
 
 .home-loader-logo {
@@ -43,6 +44,14 @@ a {
   height: 2px;
   background: #c2500b;
   transform-origin: left center;
+}
+
+@keyframes home-loader-auto-hide {
+  to {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 }
 
 .site-shell {
